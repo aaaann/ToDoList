@@ -40,8 +40,12 @@ public class TaskPresenter {
                 mTasks = taskModels;
                 mMainActivityWeakReference.get().showData();
             }
-        });
 
+            @Override
+            public void onFinish(Integer count) {
+
+            }
+        });
     }
 
     public void addTask(final String taskName) {
@@ -60,6 +64,40 @@ public class TaskPresenter {
             public void onFinish(List<TaskModel> taskModels) {
 
             }
+
+            @Override
+            public void onFinish(Integer count) {
+
+            }
+        });
+    }
+
+    /**
+     * called when task is checked as done
+     */
+    public void onCheckChanged(int position, final boolean isChecked) {
+        // todo: call update method of repository, update model
+        final TaskModel task = mTasks.get(position);
+        mTaskRepository.updateTask(task.getId(), isChecked, new TaskRepository.OnDbOperationFinishListener() {
+            @Override
+            public void onFinish(Long id) {
+
+            }
+
+            @Override
+            public void onFinish(List<TaskModel> taskModels) {
+
+            }
+
+            @Override
+            public void onFinish(Integer count) {
+                if (count == 1) {
+                    task.setIsDone(isChecked);
+                } else {
+                    Log.d(TAG, "error while updating data");
+                }
+                mMainActivityWeakReference.get().showData();
+            }
         });
 
     }
@@ -69,16 +107,11 @@ public class TaskPresenter {
     }
 
 
-    /**
-     * called when task is checked as done
-     */
-    public void checkTaskAsDone() {
-
-    }
-
     public void onBindRecordRowViewAtPosition(int position, ITaskRowView rowView) {
         TaskModel model = mTasks.get(position);
         rowView.setTaskLabel(model.getLabel());
+        rowView.setTaskDone(model.isDone());
+        rowView.setOnCheckListener(position);
     }
 
     public int getRecordRowsCount() {

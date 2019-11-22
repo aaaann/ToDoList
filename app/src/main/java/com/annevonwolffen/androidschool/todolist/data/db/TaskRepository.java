@@ -2,6 +2,7 @@ package com.annevonwolffen.androidschool.todolist.data.db;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -28,6 +29,11 @@ public class TaskRepository {
     public void insertTask(String taskName, OnDbOperationFinishListener onDbOperationFinishListener) {
         InsertAsyncTask insertTaskAsyncTask = new InsertAsyncTask(taskName, onDbOperationFinishListener);
         insertTaskAsyncTask.execute();
+    }
+
+    public void updateTask(long id, boolean isDone, OnDbOperationFinishListener onDbOperationFinishListener) {
+        UpdateAsyncTask updateTaskAsyncTask = new UpdateAsyncTask(id, isDone, onDbOperationFinishListener);
+        updateTaskAsyncTask.execute();
     }
 
     private List<TaskModel> findAll() {
@@ -75,38 +81,26 @@ public class TaskRepository {
         return mDb.insert(TaskSchema.TaskTable.TABLE_NAME, null, values);
     }
 
+    private int update(long id, boolean isDone) {
+        mDb = mDbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(TaskSchema.TaskTable.Cols.IS_DONE, isDone ? 1 : 0);
+
+        String selection = BaseColumns._ID + " = ?";
+        String[] selectionArgs = { "" + id };
+        return mDb.update(
+                TaskSchema.TaskTable.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs);
+    }
+
 //    private long delete() {
 //
 //
+
 //    }
 
-//    private long update() {
-//
-//    }
-
-
-    private class InsertAsyncTask extends AsyncTask<Void, Void, Long> {
-
-        private final OnDbOperationFinishListener mOnDbOperationFinishListener;
-        private final String mTaskName;
-
-        private InsertAsyncTask(String taskName, OnDbOperationFinishListener onDbOperationFinishListener) {
-            mTaskName = taskName;
-            mOnDbOperationFinishListener = onDbOperationFinishListener;
-        }
-
-        @Override
-        protected Long doInBackground(Void... voids) {
-            return insert(mTaskName);
-        }
-
-        @Override
-        protected void onPostExecute(Long id) {
-            super.onPostExecute(id);
-
-            mOnDbOperationFinishListener.onFinish(id);
-        }
-    }
 
     private class GetAsyncTask extends AsyncTask<Void, Void, List<TaskModel>> {
         private final OnDbOperationFinishListener mOnDbOperationFinishListener;
@@ -127,11 +121,62 @@ public class TaskRepository {
             mOnDbOperationFinishListener.onFinish(taskModels);
         }
     }
+    private class InsertAsyncTask extends AsyncTask<Void, Void, Long> {
+
+        private final OnDbOperationFinishListener mOnDbOperationFinishListener;
+
+        private final String mTaskName;
+
+        private InsertAsyncTask(String taskName, OnDbOperationFinishListener onDbOperationFinishListener) {
+            mTaskName = taskName;
+            mOnDbOperationFinishListener = onDbOperationFinishListener;
+        }
+
+        @Override
+        protected Long doInBackground(Void... voids) {
+            return insert(mTaskName);
+        }
+        @Override
+        protected void onPostExecute(Long id) {
+            super.onPostExecute(id);
+
+            mOnDbOperationFinishListener.onFinish(id);
+        }
+
+    }
+
+    private class UpdateAsyncTask extends AsyncTask<Void, Void, Integer> {
+
+        private final OnDbOperationFinishListener mOnDbOperationFinishListener;
+        private final long mId;
+        private final boolean mIsDone;
+
+        private UpdateAsyncTask(long id, boolean isDone, OnDbOperationFinishListener onDbOperationFinishListener) {
+            mId = id;
+            mIsDone = isDone;
+            mOnDbOperationFinishListener = onDbOperationFinishListener;
+        }
+
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            return update(mId, mIsDone);
+        }
+
+        @Override
+        protected void onPostExecute(Integer count) {
+            super.onPostExecute(count);
+
+            mOnDbOperationFinishListener.onFinish(count);
+        }
+    }
 
     public interface OnDbOperationFinishListener {
         void onFinish(Long id);
 
         void onFinish(List<TaskModel> taskModels);
+
+        void onFinish(Integer count);
     }
 
 
