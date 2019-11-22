@@ -1,6 +1,7 @@
 package com.annevonwolffen.androidschool.todolist.presentation.presenter;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TaskPresenter {
+    private final static String TAG = "TaskPresenter";
 
     private final WeakReference<IMainView> mMainActivityWeakReference;
     private final TaskRepository mTaskRepository;
@@ -26,26 +28,52 @@ public class TaskPresenter {
         mTaskRepository = new TaskRepository(context);
     }
 
-    public void addTask(String taskName) {
+    public void loadData() {
+        mTaskRepository.getTasks(new TaskRepository.OnDbOperationFinishListener() {
+            @Override
+            public void onFinish(Long id) {
 
-        // todo: call of some db repository for insert
+            }
 
-        mMainActivityWeakReference.get().showData();
+            @Override
+            public void onFinish(List<TaskModel> taskModels) {
+                mTasks = taskModels;
+                mMainActivityWeakReference.get().showData();
+            }
+        });
+
+    }
+
+    public void addTask(final String taskName) {
+        mTaskRepository.insertTask(taskName, new TaskRepository.OnDbOperationFinishListener() {
+            @Override
+            public void onFinish(Long id) {
+                if (id != -1) {
+                    mTasks.add(new TaskModel(id, taskName));
+                } else {
+                    Log.d(TAG, "error while inserting data");
+                }
+                mMainActivityWeakReference.get().showData();
+            }
+
+            @Override
+            public void onFinish(List<TaskModel> taskModels) {
+
+            }
+        });
+
     }
 
     public void deleteTask(String taskName) { //todo: vielleicht taskID
 
     }
 
+
     /**
      * called when task is checked as done
      */
     public void checkTaskAsDone() {
 
-    }
-
-    public void loadData() {
-        // todo: initialize mTasks from db
     }
 
     public void onBindRecordRowViewAtPosition(int position, ITaskRowView rowView) {

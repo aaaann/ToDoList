@@ -20,8 +20,10 @@ public class DBHelper extends SQLiteOpenHelper {
         // Создание БД, если она была открыта впервые
         db.execSQL("create table " + TaskSchema.TaskTable.TABLE_NAME + "(" +
                 " _id integer primary key autoincrement, " +
-                TaskSchema.TaskTable.Cols.UUID + " text, " +
-                TaskSchema.TaskTable.Cols.NAME + " text) " );
+                //TaskSchema.TaskTable.Cols.UUID + " text, " +
+                TaskSchema.TaskTable.Cols.IS_DELETED + " integer default 0, " +
+                TaskSchema.TaskTable.Cols.IS_DONE + " integer default 0, " +
+                TaskSchema.TaskTable.Cols.NAME + " text not null) " );
     }
 
     @Override
