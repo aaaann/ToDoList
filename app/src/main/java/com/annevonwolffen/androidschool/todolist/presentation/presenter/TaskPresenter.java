@@ -54,10 +54,10 @@ public class TaskPresenter {
             public void onFinish(Long id) {
                 if (id != -1) {
                     mTasks.add(new TaskModel(id, taskName));
+                    mMainActivityWeakReference.get().showData();
                 } else {
                     Log.d(TAG, "error while inserting data");
                 }
-                mMainActivityWeakReference.get().showData();
             }
 
             @Override
@@ -76,7 +76,7 @@ public class TaskPresenter {
      * called when task is checked as done
      */
     public void onCheckChanged(int position, final boolean isChecked) {
-        // todo: call update method of repository, update model
+        Log.d(TAG, "onCheckChanged: " + position);
         final TaskModel task = mTasks.get(position);
         mTaskRepository.updateTask(task.getId(), isChecked, new TaskRepository.OnDbOperationFinishListener() {
             @Override
@@ -93,10 +93,11 @@ public class TaskPresenter {
             public void onFinish(Integer count) {
                 if (count == 1) {
                     task.setIsDone(isChecked);
+                    mMainActivityWeakReference.get().showData();
+                    Log.d(TAG, "onFinish: "+ mTasks.toString());
                 } else {
                     Log.d(TAG, "error while updating data");
                 }
-                mMainActivityWeakReference.get().showData();
             }
         });
 

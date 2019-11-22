@@ -7,7 +7,6 @@ public class TaskSchema {
             //public static final String UUID = "uuid";
             public static final String NAME = "NAME";
             public static final String IS_DONE = "IS_DONE";
-            public static final String IS_DELETED = "IS_DELETED";
         }
     }
 }

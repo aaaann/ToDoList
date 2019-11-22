@@ -4,18 +4,17 @@ public class TaskModel {
     private long mId;
     private String mLabel;
     private boolean mIsDone;
-    private boolean mIsDeleted;
 
     public TaskModel(long id, String label) {
         mId = id;
         mLabel = label;
     }
 
-    public TaskModel(long id, String label, boolean isDone, boolean isDeleted) {
+    public TaskModel(long id, String label, boolean isDone) {
         mId = id;
         mLabel = label;
         mIsDone = isDone;
-        mIsDeleted = isDeleted;
+
     }
 
     public long getId() {
@@ -30,15 +29,8 @@ public class TaskModel {
         return mIsDone;
     }
 
-    public boolean isDeleted() {
-        return mIsDeleted;
-    }
-
     public void setIsDone(boolean isDone) {
         mIsDone = isDone;
     }
 
-    public void setIsDeleted(boolean isDeleted) {
-        mIsDeleted = isDeleted;
-    }
 }

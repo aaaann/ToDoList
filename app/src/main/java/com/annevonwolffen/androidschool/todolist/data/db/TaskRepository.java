@@ -42,16 +42,14 @@ public class TaskRepository {
         String[] projection = {
                 BaseColumns._ID,
                 TaskSchema.TaskTable.Cols.NAME,
-                TaskSchema.TaskTable.Cols.IS_DONE,
-                TaskSchema.TaskTable.Cols.IS_DELETED
+                TaskSchema.TaskTable.Cols.IS_DONE
         };
-        String selection = TaskSchema.TaskTable.Cols.IS_DELETED + " = ?";
-        String[] selectionArgs = { "0" };
+
         Cursor cursor = mDb.query(
                 TaskSchema.TaskTable.TABLE_NAME, // Название таблиы
                 projection, // Какие колонки нужны - columns
-                selection, // Условие
-                selectionArgs, // Значения условия
+                null, // Условие
+                null, // Значения условия
                 null, // группировка – groupBy
                 null, // фильтр (после группировки) - having
                 null // сортировка
@@ -62,8 +60,7 @@ public class TaskRepository {
             while(cursor.moveToNext()) {
                 tasks.add(new TaskModel(cursor.getLong(cursor.getColumnIndex(BaseColumns._ID)),
                         cursor.getString(cursor.getColumnIndex(TaskSchema.TaskTable.Cols.NAME)),
-                        cursor.getInt(cursor.getColumnIndex(TaskSchema.TaskTable.Cols.IS_DONE)) == 1,
-                        cursor.getInt(cursor.getColumnIndex(TaskSchema.TaskTable.Cols.IS_DELETED)) == 1));
+                        cursor.getInt(cursor.getColumnIndex(TaskSchema.TaskTable.Cols.IS_DONE)) == 1));
             }
         } finally {
             cursor.close();
