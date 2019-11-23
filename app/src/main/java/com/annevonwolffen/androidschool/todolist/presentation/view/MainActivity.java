@@ -15,8 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.annevonwolffen.androidschool.todolist.R;
 import com.annevonwolffen.androidschool.todolist.presentation.presenter.TaskPresenter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
-public class MainActivity extends AppCompatActivity implements IMainView{
+public class MainActivity extends AppCompatActivity implements IMainView {
 
     private static final String TAG = "addTask";
 
@@ -41,12 +42,7 @@ public class MainActivity extends AppCompatActivity implements IMainView{
         initRecyclerView();
 
         mCreateTaskButton = findViewById(R.id.fab_create_task);
-        mCreateTaskButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openDialog();
-            }
-        });
+        mCreateTaskButton.setOnClickListener(v -> openDialog());
     }
 
     private void providePresenter() {
@@ -69,13 +65,10 @@ public class MainActivity extends AppCompatActivity implements IMainView{
 
         final EditText editText = new EditText(this);
         builder.setView(editText);
-        builder.setTitle("Add task");
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                mPresenter.addTask(editText.getText().toString());
-                Log.d(TAG, "onClick: " + editText.getText());
-            }
+        builder.setTitle(R.string.add_task);
+        builder.setPositiveButton(R.string.OK, (dialog, which) -> {
+            mPresenter.addTask(editText.getText().toString());
+            Log.d(TAG, "onClick: " + editText.getText());
         });
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -85,5 +78,27 @@ public class MainActivity extends AppCompatActivity implements IMainView{
     @Override
     public void showData() {
         mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void openDeleteDialog(final OnDeleteClicked onDeleteClicked) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setMessage(R.string.do_you_want_to_delete);
+
+        dialogBuilder.setPositiveButton(R.string.OK, (dialog, which) -> {
+            if (onDeleteClicked.onDelete()) {
+                Snackbar snackbar = Snackbar.make(findViewById(R.id.root_coordinator),
+                        R.string.text_deleted, Snackbar.LENGTH_LONG);
+
+                snackbar.show();
+            }
+        });
+        AlertDialog dialog = dialogBuilder.create();
+        dialog.show();
+
+    }
+
+    public interface OnDeleteClicked {
+        boolean onDelete();
     }
 }

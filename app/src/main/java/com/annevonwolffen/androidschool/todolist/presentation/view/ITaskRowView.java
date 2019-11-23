@@ -6,4 +6,6 @@ public interface ITaskRowView {
     void setTaskDone(Boolean isDone);
 
     void setOnCheckListener(int position);
+
+    void setOnLongClickListener(int position);
 }

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 
 import com.annevonwolffen.androidschool.todolist.data.db.TaskRepository;
 import com.annevonwolffen.androidschool.todolist.data.model.TaskModel;
@@ -94,7 +93,7 @@ public class TaskPresenter {
                 if (count == 1) {
                     task.setIsDone(isChecked);
                     mMainActivityWeakReference.get().showData();
-                    Log.d(TAG, "onFinish: "+ mTasks.toString());
+                    Log.d(TAG, "onFinish: update " + task.toString());
                 } else {
                     Log.d(TAG, "error while updating data");
                 }
@@ -103,8 +102,38 @@ public class TaskPresenter {
 
     }
 
-    public void deleteTask(String taskName) { //todo: vielleicht taskID
+    private boolean deleteTask(int position) {
+        Log.d(TAG, "deleteTask: " + position);
+        final TaskModel task = mTasks.get(position);
 
+        mTaskRepository.deleteTask(task.getId(), new TaskRepository.OnDbOperationFinishListener() {
+            @Override
+            public void onFinish(Long id) {
+
+            }
+
+            @Override
+            public void onFinish(List<TaskModel> taskModels) {
+
+            }
+
+            @Override
+            public void onFinish(Integer count) {
+                if (count == 1) {
+                    mTasks.remove(task);
+                    mMainActivityWeakReference.get().showData();
+                    Log.d(TAG, "onFinish: " );
+                } else {
+                    Log.d(TAG, "error while deleting data");
+                }
+            }
+        });
+
+        return mTasks.indexOf(task) == -1;
+    }
+
+    public void onLongClick(final int position) {
+        mMainActivityWeakReference.get().openDeleteDialog(() -> deleteTask(position));
     }
 
 
@@ -113,6 +142,7 @@ public class TaskPresenter {
         rowView.setTaskLabel(model.getLabel());
         rowView.setTaskDone(model.isDone());
         rowView.setOnCheckListener(position);
+        rowView.setOnLongClickListener(position);
     }
 
     public int getRecordRowsCount() {

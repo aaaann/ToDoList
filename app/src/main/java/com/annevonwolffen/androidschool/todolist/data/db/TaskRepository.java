@@ -2,7 +2,6 @@ package com.annevonwolffen.androidschool.todolist.data.db;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -32,7 +31,12 @@ public class TaskRepository {
     }
 
     public void updateTask(long id, boolean isDone, OnDbOperationFinishListener onDbOperationFinishListener) {
-        UpdateAsyncTask updateTaskAsyncTask = new UpdateAsyncTask(id, isDone, onDbOperationFinishListener);
+        UpdateAsyncTask deleteTaskAsyncTask = new UpdateAsyncTask(id, isDone, onDbOperationFinishListener);
+        deleteTaskAsyncTask.execute();
+    }
+
+    public void deleteTask(long id, OnDbOperationFinishListener onDbOperationFinishListener) {
+        DeleteAsyncTask updateTaskAsyncTask = new DeleteAsyncTask(id, onDbOperationFinishListener);
         updateTaskAsyncTask.execute();
     }
 
@@ -92,11 +96,16 @@ public class TaskRepository {
                 selectionArgs);
     }
 
-//    private long delete() {
-//
-//
+    private int delete(long id) {
+        mDb = mDbHelper.getWritableDatabase();
+        String selection = BaseColumns._ID + " = ?";
+        String[] selectionArgs = { "" + id };
 
-//    }
+        return mDb.delete(
+                TaskSchema.TaskTable.TABLE_NAME,
+                selection,
+                selectionArgs);
+    }
 
 
     private class GetAsyncTask extends AsyncTask<Void, Void, List<TaskModel>> {
@@ -154,10 +163,31 @@ public class TaskRepository {
             mOnDbOperationFinishListener = onDbOperationFinishListener;
         }
 
-
         @Override
         protected Integer doInBackground(Void... voids) {
             return update(mId, mIsDone);
+        }
+
+        @Override
+        protected void onPostExecute(Integer count) {
+            super.onPostExecute(count);
+
+            mOnDbOperationFinishListener.onFinish(count);
+        }
+    }
+
+    private class DeleteAsyncTask extends AsyncTask<Void, Void, Integer> {
+        private final OnDbOperationFinishListener mOnDbOperationFinishListener;
+        private final long mId;
+
+        private DeleteAsyncTask(long id, OnDbOperationFinishListener onDbOperationFinishListener) {
+            mOnDbOperationFinishListener = onDbOperationFinishListener;
+            mId = id;
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            return delete(mId);
         }
 
         @Override

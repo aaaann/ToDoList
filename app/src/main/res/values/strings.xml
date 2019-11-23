@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">ToDoList</string>
+    <string name="text_deleted">УДАЛЕНО</string>
+    <string name="do_you_want_to_delete">Удалить выбранный элемент?</string>
+    <string name="OK">OK</string>
+    <string name="add_task">Добавить заметку</string>
 </resources>

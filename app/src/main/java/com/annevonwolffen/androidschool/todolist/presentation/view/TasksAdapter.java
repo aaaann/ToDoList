@@ -45,6 +45,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
         private TextView mLabel;
         private CheckBox mIsDone;
         private TaskPresenter mPresenter;
+        private View mView;
 
         public TaskViewHolder(@NonNull View itemView, TaskPresenter taskPresenter) {
             super(itemView);
@@ -52,6 +53,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
             mPresenter = taskPresenter;
             mLabel = itemView.findViewById(R.id.tv_task_name);
             mIsDone = itemView.findViewById(R.id.chbx_done);
+            mView = itemView;
         }
 
         @Override
@@ -72,6 +74,17 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     mPresenter.onCheckChanged(position, isChecked);
+                }
+            });
+        }
+
+        @Override
+        public void setOnLongClickListener(final int position) {
+            mView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    mPresenter.onLongClick(position);
+                    return true;
                 }
             });
         }

@@ -3,21 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp"
+    android:layout_margin="@dimen/default_margin"
     android:orientation="horizontal">
 
     <CheckBox
         android:id="@+id/chbx_done"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="5dp"
+        android:layout_marginRight="@dimen/checkbox_margin_right"
         android:checked="false" />
 
     <TextView
         android:id="@+id/tv_task_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
+        android:textSize="@dimen/task_text_size"
         tools:text="Etwas tun" />
 
 

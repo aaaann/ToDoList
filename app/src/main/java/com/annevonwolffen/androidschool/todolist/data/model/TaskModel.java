@@ -33,4 +33,12 @@ public class TaskModel {
         mIsDone = isDone;
     }
 
+    @Override
+    public String toString() {
+        return "TaskModel{" +
+                "mId=" + mId +
+                ", mLabel='" + mLabel + '\'' +
+                ", mIsDone=" + mIsDone +
+                '}';
+    }
 }
