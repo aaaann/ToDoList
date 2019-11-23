@@ -76,7 +76,6 @@ public class TaskRepository {
     private long insert(String taskName) {
         mDb = mDbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        //values.put(TaskSchema.TaskTable.Cols.UUID, "12309038493"); // todo: call java method for generate UUID
         values.put(TaskSchema.TaskTable.Cols.NAME, taskName);
 
         return mDb.insert(TaskSchema.TaskTable.TABLE_NAME, null, values);
